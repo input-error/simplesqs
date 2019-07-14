@@ -1,2 +1,1 @@
-# simplesqs
-Simple interface for interacting with an SQS queue written in GO.
+https://github.com/golang/go/wiki/Modules
