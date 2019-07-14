@@ -68,6 +68,18 @@ func TestConvert(t *testing.T) {
 	}
 }
 
+func TestConvert_nil(t *testing.T) {
+	t.Parallel()
+
+	var convertedAttributes map[string]*sqs.MessageAttributeValue
+	convertedAttributes = convert(nil)
+
+	if len(convertedAttributes) != 0 {
+		t.Logf("convertedAttributes has value of %#v\n", convertedAttributes)
+		t.Error("len(convertedAttributes) was greater than 0")
+	}
+}
+
 func TestSendMessage(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping TestSendMessage in short mode")
