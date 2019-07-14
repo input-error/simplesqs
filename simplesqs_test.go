@@ -91,6 +91,21 @@ func TestSendMessage(t *testing.T) {
 	tq.MQ.SendMessage("{ 'bucket': 'testBucket', 'filename': 'test.txt' }", map[string]string{"bucket": "testBucket"})
 }
 
+func TestSendMessage_case1(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping TestSendMessage in short mode")
+	}
+
+	tq := TestData{}
+	tq.Init()
+
+	_, err := tq.MQ.SendMessage("This is a test!", map[string]string{})
+
+	if err != nil {
+		t.Errorf("SendMessage returned an error when attempting to send.")
+	}
+}
+
 func TestReceiveMessage(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping TestReceiveMessage in short mode")
@@ -100,7 +115,7 @@ func TestReceiveMessage(t *testing.T) {
 	tq.Init()
 
 	tq.MQ.SendMessage("{ 'bucket': 'testBucket', 'filename': 'test.txt' }", map[string]string{"bucket": "testBucket"})
-	messages, err := tq.MQ.ReceiveMessage(2)
+	messages, err := tq.MQ.ReceiveMessage(1)
 
 	if err != nil {
 		t.Errorf("error receiving messages. Error %s", err)

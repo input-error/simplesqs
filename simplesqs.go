@@ -78,15 +78,26 @@ func convert(attributes map[string]string) map[string]*sqs.MessageAttributeValue
 }
 
 func (mq *MessageQueue) SendMessage(body string, attributes map[string]string) (*sqs.SendMessageOutput, error) {
-	res, err := mq.svc.SendMessage(&sqs.SendMessageInput{
-		DelaySeconds:      aws.Int64(0),
-		MessageAttributes: convert(attributes),
-		MessageBody:       aws.String(body),
-		QueueUrl:          mq.queueUrl,
-	})
+	var res *sqs.SendMessageOutput
+	var err error
+
+	if len(attributes) > 0 {
+		res, err = mq.svc.SendMessage(&sqs.SendMessageInput{
+			DelaySeconds:      aws.Int64(0),
+			MessageAttributes: convert(attributes),
+			MessageBody:       aws.String(body),
+			QueueUrl:          mq.queueUrl,
+		})
+	} else {
+		res, err = mq.svc.SendMessage(&sqs.SendMessageInput{
+			DelaySeconds: aws.Int64(0),
+			MessageBody:  aws.String(body),
+			QueueUrl:     mq.queueUrl,
+		})
+	}
 
 	if err != nil {
-		log.Fatalf("Error sending message to queue %s with body %s and attributes %#v\n", mq.QueueName, body, attributes)
+		log.Fatalf("Error sending message to queue %s with body %s and attributes %#v\n. Error: %s\n", mq.QueueName, body, attributes, err)
 	}
 
 	return res, err
